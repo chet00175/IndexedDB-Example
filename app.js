@@ -92,3 +92,7 @@ function updatingText(li, span, edit, todo) {
         }
     });
 }
+
+function deleteRecords() {
+    todoDB.deleteAllTodos(refreshTodos);
+}

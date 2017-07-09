@@ -212,6 +212,28 @@ var todoDB = (function() {
         }
     };
 
+    tDB.deleteAllTodos = function(callback) {
+        var db = datastore;
+        var transaction = db.transaction(['todo'], 'readwrite');
+        var objStore = transaction.objectStore('todo');
+
+        transaction.oncomplete = function(e) {
+            // Execute the callback function.
+            callback();
+        };
+
+        objStore.openCursor().onsuccess = function(e) {
+            var cursor = e.target.result;
+            if (cursor) {
+                if (cursor.value.id === 34 || cursor.value.id === 37) {
+                    var request = cursor.delete();
+                    request.onsuccess = function() {};
+                }
+                cursor.continue();
+            }
+        };
+    };
+
     // Export the tDB object.
     return tDB;
 }());

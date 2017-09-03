@@ -9,7 +9,7 @@ window.onload = function() {
     // window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     // window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || { READ_WRITE: "readwrite" }; // This line should only be needed if it is needed to support the object's constants for older browsers
     // window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-    todoDB.open(refreshTodos);
+    todoDB.open(refreshTodos, 1); // Pass higher version if needed.
     // Get references to the form elements.
     var newTodoForm = document.getElementById('new-todo-form');
     var newTodoInput = document.getElementById('new-todo');

@@ -7,9 +7,7 @@ var todoDB = (function() {
     /**
      * Open a connection to the datastore.
      */
-    tDB.open = function(callback) {
-        // Database version.
-        var version = 1;
+    tDB.open = function(callback, version) {
 
         var request = window.indexedDB.open('todos', version);
 
@@ -19,16 +17,32 @@ var todoDB = (function() {
 
             e.target.transaction.onerror = tDB.onerror;
 
-            // Delete the old datastore.
-            if (db.objectStoreNames.contains('todo')) {
-                db.deleteObjectStore('todo');
+            if (e.oldVersion < 1) {
+                // Delete the old datastore.
+                if (db.objectStoreNames.contains('todo')) {
+                    db.deleteObjectStore('todo');
+                }
+
+                // Create a new datastore.
+                var store = db.createObjectStore('todo', {
+                    keyPath: 'id',
+                    autoIncrement: true
+                });
             }
 
-            // Create a new datastore.
-            var store = db.createObjectStore('todo', {
-                keyPath: 'id',
-                autoIncrement: true
-            });
+            // To add new version uncomment the following code.
+            // if (e.oldVersion < 2) {
+
+            //     if (db.objectStoreNames.contains('newstore')) {
+            //         db.deleteObjectStore('newstore');
+            //     }
+
+            //     // new store
+            //     var newstore = db.createObjectStore('newstore', {
+            //         keyPath: 'local_id',
+            //         autoIncrement: true
+            //     });
+            // }
         };
 
         // Handle successful datastore access.
@@ -39,7 +53,7 @@ var todoDB = (function() {
             // Execute the callback.
             callback();
 
-            tDB.fetchAgeGender(function() {});
+            // tDB.fetchAgeGender(function() {});
         };
 
         // Handle errors when opening the datastore.
@@ -225,10 +239,8 @@ var todoDB = (function() {
         objStore.openCursor().onsuccess = function(e) {
             var cursor = e.target.result;
             if (cursor) {
-                if (cursor.value.id === 34 || cursor.value.id === 37) {
-                    var request = cursor.delete();
-                    request.onsuccess = function() {};
-                }
+                var request = cursor.delete();
+                request.onsuccess = function() {};
                 cursor.continue();
             }
         };
